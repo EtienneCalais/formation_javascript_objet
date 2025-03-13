@@ -1,8 +1,9 @@
-const obj = {
-    firstname:'Jean',
-    lastname:'Louis',
-    age:15
-}
-console.log(JSON.stringify(obj));
+const book ={
+    author:{
+        name:"Jean",
+    },
+};
 
-console.log(JSON.parse(`{"firstname":"Jean","lastname":"Louis","age":"15"}`))
+const userName = book.author?.name;
+
+console.log(userName);
