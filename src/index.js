@@ -1,10 +1,13 @@
-const book ={
-    author:{
-        name:"Jean",
-    },
-};
-
-const userName = book.author?.name;
-
-console.log(userName);
-console.log(userName);
+const a =() => {
+    let arr=[];
+    for (var i = 0;i<3;i++){
+        arr.push(function(){
+            console.log(i)
+        })
+    }
+    return arr;
+}
+const tab=a();
+tab[0]();
+tab[1]();
+tab[2]();
