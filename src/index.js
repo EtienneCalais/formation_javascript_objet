@@ -1,13 +1,3 @@
-const a =() => {
-    let arr=[];
-    for (var i = 0;i<3;i++){
-        arr.push(function(){
-            console.log(i)
-        })
-    }
-    return arr;
-}
-const tab=a();
-tab[0]();
-tab[1]();
-tab[2]();
+const a =[2,25,100,23]
+a.sort();
+console.log(a.sort((c,d)=>c-d));
