@@ -10,6 +10,7 @@ if (localStorage.getItem("TODODATA")){
         donnees.addPersonne(recup.info.utilisateurs[i])
     }
     personne=recup.info.utilisateurs[recup.info.utilisateurs.length-1].login;
+    inputLogin.value=personne
 }
 else{
     personne=inputLogin.value
