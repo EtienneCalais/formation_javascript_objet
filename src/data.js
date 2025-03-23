@@ -8,6 +8,7 @@ class task{
 }
 class taskDay{
     constructor(tache){
+        
         if (tache.jour) this.jour=tache.jour;
         if (tache.toDo) {this.toDo=tache.toDo} else {this.toDo=[]};
         if (tache.isDone) {this.isDone=tache.isDone}else {this.isDone=[]};
@@ -19,7 +20,10 @@ class taskDay{
     static isDelete=[];
     addToDo(tache){
         const tacheN=new task(tache);
+        if (!this.getToDoTache(tache)&&!this.getIsDoneTache(tache)&&!this.getIsDeleteTache(tache)){
         this.toDo.push(tacheN)
+        return true}
+        else {return false}
     }
     getToDoAll(){
         return this.toDo;
@@ -208,6 +212,27 @@ class user{
             this.login=personne.login;
             if (personne.tachesSemaine){
             this.tachesSemaine=new tasksWeek(personne.tachesSemaine);}
+            else{
+                this.tachesSemaine=new tasksWeek({monday:{jour:"Lundi"},
+                    sunday:{jour:"Dimanche"},
+                    tuesday:{jour:"Mardi"},
+                    wednesday:{jour:"Mercredi"},
+                    thursday:{jour:"Jeudi"},
+                    friday:{jour:"Vendredi"},
+                    saturday:{jour:"Samedi"}} );
+                console.log(this.tachesSemaine)
+            }
+        }
+        else{if (personne){
+            this.login=personne;
+            this.tachesSemaine=new tasksWeek({monday:{jour:"Lundi"},
+                sunday:{jour:"Dimanche"},
+                tuesday:{jour:"Mardi"},
+                wednesday:{jour:"Mercredi"},
+                thursday:{jour:"Jeudi"},
+                friday:{jour:"Vendredi"},
+                saturday:{jour:"Samedi"}} );
+            }
         }
     };
     match(utilisateur){
@@ -227,7 +252,7 @@ class data{
     static info;
     
     constructor(){
-        this.info={utilisateurs:[]};console.log("constructeur");
+        this.info={utilisateurs:[]};
     };
 
     getInfoG()  {
@@ -235,12 +260,16 @@ class data{
     };
     //Gestion personne
     addPersonne(personne){
-        const utilisateur = new user(personne);
+        let trouve = false
+        for(let i =0;i<this.info.utilisateurs.length;i++){
+            if (this.info.utilisateurs[i].match(personne)){trouve=true;break;}
+        } 
+        if(!trouve)
+        {const utilisateur = new user(personne);
         this.info.utilisateurs.push(utilisateur);
-        return utilisateur
+        return utilisateur}
     }
     getPersonne(personne){
-        console.log("getpersonne"+personne)
         for(let i =0;i<this.info.utilisateurs.length;i++){
             if (this.info.utilisateurs[i].match(personne)){return this.info.utilisateurs[i]}
         }       

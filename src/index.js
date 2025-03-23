@@ -1,43 +1,66 @@
 import "./style.css";
 import * as data from "/data.js";
 let donnees =data.getData();
+const inputLogin=document.getElementById("input2");
+let personne="Etienne"
+let jour="Lundi"
 if (localStorage.getItem("TODODATA")){
     let recup=JSON.parse(localStorage.getItem("TODODATA"))
     for (let i=0;i<recup.info.utilisateurs.length;i++) {
         donnees.addPersonne(recup.info.utilisateurs[i])
     }
+    personne=recup.info.utilisateurs[recup.info.utilisateurs.length-1].login;
 }
 else{
-    donnees.addPersonne({login:"Etienne",tachesSemaine:{monday:{jour:"lundi"}}})
+    personne=inputLogin.value
+    donnees.addPersonne(personne)
 }
 donnees =data.getData();
 
 const ul = document.getElementById("ul1");
 const form =document.getElementById("form1");
+const form2 =document.getElementById("form2");
 const input=document.getElementById("input1");
 
 const ul2 = document.getElementById("ul2");
 const ul3 = document.getElementById("ul3");
+const selday=document.getElementById("day-select");
+let todos =donnees.getaskDayToDo(personne,jour);
+let isdones =donnees.getaskDayIsDone(personne,jour);
+let isdelteted =donnees.getaskDayIsDelete(personne,jour);
+
+const chargement=()=>{
+    todos =donnees.getaskDayToDo(personne,jour);
+    isdones =donnees.getaskDayIsDone(personne,jour);
+    isdelteted =donnees.getaskDayIsDelete(personne,jour);
+    displayTodo();
+}
+selday.addEventListener("change",(event)=>{jour=selday.value
+   chargement()
+
+})
 
 
-const todos =donnees.getaskDayToDo("Etienne","Lundi");
-const isdones =donnees.getaskDayIsDone("Etienne","Lundi");
-const isdelteted =donnees.getaskDayIsDelete("Etienne","Lundi");
 form.addEventListener("submit",(event)=>{
     event.preventDefault();
     const value = input.value;
     input.value="";
     addTodo(value);
 })
+form2.addEventListener("submit",(event)=>{
+    event.preventDefault();
+    const value = inputLogin.value;
+    personne=value
+    donnees.addPersonne(value)
+    chargement();
+})
 
-const personne="Etienne"
 const displayTodo =()=>{
     ul.innerHTML="";
    for (let index=0;index<todos.length;index++){
         if(todos[index].isEdit){
             ul.append(createTodoEditElement(todos[index].name));
         } else{
-            console.log("ul");
             ul.append(createTodoElement(todos[index].name));
         }
     }
@@ -53,10 +76,14 @@ const displayTodo =()=>{
 
 const createTodoElement=(todo)=>{
     const li =document.createElement("li");
+    const buttonProcrastiner=document.createElement("button");
+    const buttonAvancer = document.createElement("button");
     const buttonDelete=document.createElement("button");
     const buttonEdit = document.createElement("button");
     buttonDelete.innerHTML="Supprimer";
     buttonEdit.innerHTML="Edit";
+    buttonProcrastiner.innerHTML="Procrastiner";
+    buttonAvancer.innerHTML="Avancer"
     buttonDelete.addEventListener("click",(event)=>{
         event.stopPropagation();
         deleteTodo(todo);
@@ -65,6 +92,14 @@ const createTodoElement=(todo)=>{
         event.stopPropagation();
         toggleEditMode(todo);
     })
+    buttonProcrastiner.addEventListener("click",(event)=>{
+        event.stopPropagation();
+        toggleProcrastiner(todo);
+    })
+    buttonAvancer.addEventListener("click",(event)=>{
+        event.stopPropagation();
+        togglebuttonAvancer(todo);
+    })
     li.innerHTML=`
     <span class="todo"></span>
     <p>${todo}</p>
@@ -72,7 +107,7 @@ const createTodoElement=(todo)=>{
     li.addEventListener("click",(event)=>{
         toggleTodo(todo);
     })
-    li.append(buttonEdit,buttonDelete);
+    li.append(buttonAvancer,buttonProcrastiner,buttonEdit,buttonDelete);
     li.className="ligne";
     return li;
 };
@@ -121,46 +156,67 @@ const createIsDeleteElement=(isdelete)=>{
         event.stopPropagation();
         toggleRestoreMode(isdelete);
     })
+    const buttonCorbeille=document.createElement("button");
+    buttonCorbeille.addEventListener("click",(event)=>{
+        event.stopPropagation();
+        toggleCorbeilleMode(isdelete);
+    })
     buttonRestore.innerHTML="Restore";
-    li.append(buttonRestore)
+    buttonCorbeille.innerHTML="Corbeille";
+    li.append(buttonRestore,buttonCorbeille)
     return li;
 };
 const addTodo=(text)=>{
-    donnees.addTaskDayToDo("Etienne","Lundi",text);
+    donnees.addTaskDayToDo(personne,jour,text);
     displayTodo();
 }
 
 const  deleteTodo =(todo)=>{
-    donnees.delTaskDayToDo("Etienne","Lundi",todo);
-    donnees.addTaskDayIsDelete("Etienne","Lundi",todo);
+    donnees.delTaskDayToDo(personne,jour,todo);
+    donnees.addTaskDayIsDelete(personne,jour,todo);
     displayTodo();
 }
 const toggleRestoreMode=(text)=>{
-    donnees.addTaskDayToDo("Etienne","Lundi",text);
-    donnees.delTaskDayIsDelete("Etienne","Lundi",text);
+    donnees.delTaskDayIsDelete(personne,jour,text);
+    donnees.addTaskDayToDo(personne,jour,text);
+    displayTodo();
+}
+const toggleCorbeilleMode=(text)=>{
+    donnees.delTaskDayIsDelete(personne,jour,text);
     displayTodo();
 }
 const toggleTodo=(text)=>{
-    donnees.addTaskDayIsDone("Etienne","Lundi",text);
-    donnees.delTaskDayToDo("Etienne","Lundi",text);
+    donnees.delTaskDayToDo(personne,jour,text);
+    donnees.addTaskDayIsDone(personne,jour,text);
     displayTodo();
 }
 const toggleIsDone=(text)=>{
-    donnees.delTaskDayIsDone("Etienne","Lundi",text);
-    donnees.addTaskDayToDo("Etienne","Lundi",text);
+    donnees.delTaskDayIsDone(personne,jour,text);
+    donnees.addTaskDayToDo(personne,jour,text);
     displayTodo();
 }
 const toggleEditMode=(text)=>{
-    console.log(personne)
-    donnees.getToDo("Etienne","Lundi",text).isEdit=!donnees.getToDo("Etienne","Lundi",text).isEdit
-
+    donnees.getToDo(personne,jour,text).isEdit=!donnees.getToDo(personne,jour,text).isEdit
+    displayTodo();
+}
+const toggleProcrastiner=(text)=>{
+    if(donnees.addTaskDayToDo(personne,demain(jour),text)){
+        donnees.delTaskDayToDo(personne,jour,text);
+    };
+    displayTodo();
+}
+const togglebuttonAvancer=(text)=>{
+    if(donnees.addTaskDayToDo(personne,hier(jour),text)){
+        donnees.delTaskDayToDo(personne,jour,text);
+    };
     displayTodo();
 }
 
+
 const editTodo=(text,input)=>{
     const value=input.value;
-    donnees.getToDo("Etienne","Lundi",text).name=value;
-    donnees.getToDo("Etienne","Lundi",value).isEdit=!donnees.getToDo("Etienne","Lundi",value).isEdit
+    donnees.getToDo(personne,jour,text).name=value;
+    donnees.getToDo(personne,jour,value).isEdit=!donnees.getToDo(personne,jour,value).isEdit
     displayTodo();
 }
 displayTodo();
@@ -169,3 +225,27 @@ displayTodo();
 let sauvegarde =setInterval (()=>{
     const jsonS=JSON.stringify(data.getData())
    localStorage.setItem("TODODATA",jsonS)},2000)
+const demain=(jour)=>{
+    switch (jour){
+        case "Lundi"    :   return "Mardi"
+        case "Mardi"    :   return "Mercredi"
+        case "Mercredi" :   return "Jeudi"
+        case "Jeudi"    :   return "Vendredi"
+        case "Vendredi" :   return "Samedi"
+        case "Samedi"   :   return "Diamnche"
+        case "Diamnche" :   return "Lundi"
+        default         :   return "Lundi"
+    }
+}
+const hier=(jour)=>{
+    switch (jour){
+        case "Mercredi" :   return "Mardi"
+        case "Jeudi"    :   return "Mercredi"
+        case "Vendredi" :   return "Jeudi"
+        case "Samedi"   :   return "Vendredi"
+        case "Diamnche" :   return "Samedi"
+        case "Lundi"    :   return "Diamnche"
+        case "Mardi"    :   return "Lundi"
+        default         :   return "Lundi"
+    }
+}

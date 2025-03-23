@@ -18,30 +18,37 @@
   p {
     margin: 0;
   }
-  
-  .container {
+  .select{
     width: 500px;
     border: 3px solid #3c16c4;
     border-radius: 3px;
     padding: 20px;
     grid-column: 3;
-    grid-row: 1;
+    grid-row: 1;    
   }
-  .container2 {
-    width: 500px;
+  .container1 {
+    width: 800px;
     border: 3px solid #3c16c4;
     border-radius: 3px;
     padding: 20px;
-    grid-column: 4;
-    grid-row: 1;
+    grid-column: 3;
+    grid-row: 2;
   }
-  .container3 {
-    width: 500px;
+  .container2 {
+    width: 600px;
     border: 3px solid #3c16c4;
     border-radius: 3px;
     padding: 20px;
     grid-column: 4;
     grid-row: 2;
+  }
+  .container3 {
+    width: 600px;
+    border: 3px solid #3c16c4;
+    border-radius: 3px;
+    padding: 20px;
+    grid-column: 4;
+    grid-row: 3;
   }   
   form {
     display: flex;
