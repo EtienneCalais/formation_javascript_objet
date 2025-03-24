@@ -6,41 +6,32 @@
   body {
     margin: 0;
     min-height: 100vh;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 10px;
-    grid-auto-rows: minmax(100px, auto);
+    display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
   }
   
   p {
     margin: 0;
   }
   .select{
-    width: 500px;
+    width: 25%;
     border: 3px solid #3c16c4;
     border-radius: 3px;
     padding: 20px;
-    grid-column: 3;
-    grid-row: 1;    
-  }
+   }
   .container1 {
-    width: 800px;
+    width: 45%;
     border: 3px solid #3c16c4;
     border-radius: 3px;
     padding: 20px;
-    grid-column: 3;
-    grid-row: 2;
   }
   .container2 {
-    width: 600px;
+    width: 30%;
     border: 3px solid #3c16c4;
     border-radius: 3px;
     padding: 20px;
-    grid-column: 4;
-    grid-row: 2;
   }
   .container3 {
     width: 600px;

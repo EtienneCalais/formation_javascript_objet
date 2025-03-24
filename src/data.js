@@ -23,7 +23,8 @@ class taskDay{
         if (!this.getToDoTache(tache)&&!this.getIsDoneTache(tache)&&!this.getIsDeleteTache(tache)){
         this.toDo.push(tacheN)
         return true}
-        else {return false}
+        else {alert("Tâche existante");
+            return false}
     }
     getToDoAll(){
         return this.toDo;
@@ -207,9 +208,17 @@ class tasksWeek{
 class user{
     static login;
     static tachesSemaine;
+    static actif;
     constructor(personne){
         if (personne.login){
             this.login=personne.login;
+            if (personne.actif){
+                this.actif=true;
+            }
+            else{
+                this.actif=false;
+            }
+            
             if (personne.tachesSemaine){
             this.tachesSemaine=new tasksWeek(personne.tachesSemaine);}
             else{
@@ -225,6 +234,7 @@ class user{
         }
         else{if (personne){
             this.login=personne;
+            this.actif=false;
             this.tachesSemaine=new tasksWeek({monday:{jour:"Lundi"},
                 sunday:{jour:"Dimanche"},
                 tuesday:{jour:"Mardi"},
@@ -268,12 +278,31 @@ class data{
         {const utilisateur = new user(personne);
         this.info.utilisateurs.push(utilisateur);
         return utilisateur}
+        else{
+            alert("Type de tâche existante");
+        }
     }
     getPersonne(personne){
         for(let i =0;i<this.info.utilisateurs.length;i++){
             if (this.info.utilisateurs[i].match(personne)){return this.info.utilisateurs[i]}
         }       
         return false;
+    };
+    setActifPersonne(personne){
+        for(let i =0;i<this.info.utilisateurs.length;i++){
+            if (this.info.utilisateurs[i].match(personne)){this.info.utilisateurs[i].actif=true}
+            else{this.info.utilisateurs[i].actif=false}
+        }       
+        return false;
+    };
+    getActifPersonne(){
+        for(let i =0;i<this.info.utilisateurs.length;i++){
+            if (this.info.utilisateurs[i].actif=true){return this.info.utilisateurs[i].login}
+        }       
+        return false;
+    };
+    getAllPersonne(){
+        return this.info.utilisateurs;
     };
     delPersonne(personne){
         for(let i =0;i<this.info.utilisateurs.length;i++){
