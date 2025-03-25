@@ -279,7 +279,7 @@ class data{
         this.info.utilisateurs.push(utilisateur);
         return utilisateur}
         else{
-            alert("Type de tâche existante");
+            alert("Thème existant");
         }
     }
     getPersonne(personne){
@@ -306,7 +306,11 @@ class data{
     };
     delPersonne(personne){
         for(let i =0;i<this.info.utilisateurs.length;i++){
-            if (this.info.utilisateurs[i].match(personne)){this.info.utilisateurs.splice(i,1)}
+            if (this.info.utilisateurs[i].match(personne)){
+                if(confirm("Souhaitez-vous supprimer définitivement le thème?"))
+                {this.info.utilisateurs.splice(i,1)
+                return true}
+            }
         }       
         return false;
     };

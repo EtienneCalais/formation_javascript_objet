@@ -7,10 +7,12 @@ let jour="Lundi";
 let todos;
 let isdones;
 let isdelteted;
+let sauvegardeauto=true;
 const ul0 = document.getElementById("ul0");
 const ul = document.getElementById("ul1");
 const form =document.getElementById("form1");
 const form2 =document.getElementById("form2");
+const form3 =document.getElementById("form3");
 const input=document.getElementById("input1");
 
 const ul2 = document.getElementById("ul2");
@@ -56,10 +58,19 @@ form2.addEventListener("submit",(event)=>{
     event.preventDefault();
     const value = inputLogin.value;
     personne=value
+    sauvegardeauto=true;
     donnees.addPersonne(value)
     unlock()
     toggleSelectUser(value)
     chargement();
+})
+form3.addEventListener("submit",(event)=>{
+    event.preventDefault();
+    if(confirm("Souhaitez-vous supprimer définitivement le storage?")){
+        localStorage.removeItem("TODODATA")
+        sauvegardeauto=false;
+        window.location = document.location;
+    }
 })
 
 const createUserInactifElement=(user)=>{
@@ -67,7 +78,7 @@ const createUserInactifElement=(user)=>{
     const span=document.createElement("span");
     const par=document.createElement("p");
     const buttonDelete=document.createElement("button");
-    buttonDelete.textContent="Supprimer Utilisateur";
+    buttonDelete.textContent="Supprimer le thème";
     buttonDelete.addEventListener("click",(event)=>{
         event.stopPropagation();
         deleteUser(user);
@@ -212,8 +223,9 @@ const toggleRestoreMode=(text)=>{
     chargement();
 }
 const toggleCorbeilleMode=(text)=>{
-    donnees.delTaskDayIsDelete(personne,jour,text);
-    chargement();
+    if(confirm("Souhaitez-vous supprimer définitivement la tâche?"))
+    {donnees.delTaskDayIsDelete(personne,jour,text);
+    chargement();}
 }
 const toggleTodo=(text)=>{
     donnees.delTaskDayToDo(personne,jour,text);
@@ -253,8 +265,9 @@ const editTodo=(text,input)=>{
 
 
 let sauvegarde =setInterval (()=>{
+    if(sauvegardeauto){
     const jsonS=JSON.stringify(data.getData())
-   localStorage.setItem("TODODATA",jsonS)},2000)
+   localStorage.setItem("TODODATA",jsonS)}},2000)
 const demain=(jour)=>{
     switch (jour){
         case "Lundi"    :   return "Mardi"
@@ -326,7 +339,10 @@ if (localStorage.getItem("TODODATA")){
         for (let i=0;i<nb;i++) {
         donnees.addPersonne(recup.info.utilisateurs[i])
         }
-        personne=donnees.getActifPersonne();
+        if(!(personne=donnees.getActifPersonne())){
+            personne=recup.info.utilisateurs[nb-1]
+            donnees.setActifPersonne(personne)
+        };
         inputLogin.value=personne
         chargement();
     }
