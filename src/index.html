@@ -6,59 +6,48 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>To do WEEK</title>
     <script type="module" src="./index.js"></script>
-
   </head>
   <body id="body">
     <div class="generale">
-    <div class="titre">
-      <h1>Planifiaction des tâches de semaine</h1>
-    </div>
-    <div class="corps">
-      <div class="select">
-        <form id = "form2">
-          <input type="text" id ="input2" />
-          <button id="boutoncharger">Ajouter</button>        
-        </form>
-        <ul id ="ul0">
-        </ul>
-        <form id = "form3">
-          <button id="boutoninit" class="reinit">Réinitialiser le storage</button>
-        </form>
+      <div class="titre">
+        <h1>Planifiaction des tâches de semaine</h1>
       </div>
-       <div class="container1" id ="div1">
-        <label for="day-select">Selectionne le jour:</label>
-        <select name="day" id="day-select">
-          <option value="Lundi">Lundi</option>
-          <option value="Mardi">Mardi</option>
-          <option value="Mercredi">Mercredi</option>
-          <option value="Vendredi">Vendredi</option>
-          <option value="Samedi">Samedi</option>
-          <option value="Dimanche">Dimanche</option>
-        </select>
-        <br>
-        <hr>
-        <br>
-        <p>Liste des tâches à faire:</p>
-        <form id = "form1">
-          <input type="text" id ="input1" />
-          <button>Ajouter</button>
-        </form>
-        <ul id ="ul1">
-        </ul>
-      </div>
-      <div class="container2" id ="div2">
-      <div  id ="div21" class="container3">
-        <p>Liste des tâches faites:</p>
-        <ul id ="ul2">
-      </ul>
-      </div>
-      <div  id ="div22" class="container4">
-      <p>Liste des tâches supprimées:</p>
-        <ul id ="ul3">
-       </ul>
+      <div class="corps">
+        <div class="select">
+          <form id="form2">
+            <input type="text" id="input2" />
+            <button id="boutoncharger">Ajouter</button>
+          </form>
+          <ul id="ul0"></ul>
+          <form id="form3">
+            <button id="boutoninit" class="reinit">
+              Réinitialiser le storage
+            </button>
+          </form>
+        </div>
+        <div class="container1" id="div1">
+          <input type="date" id="day-select" name="trip-start" />
+          <br />
+          <hr />
+          <br />
+          <p>Liste des tâches à faire:</p>
+          <form id="form1">
+            <input type="text" id="input1" />
+            <button>Ajouter</button>
+          </form>
+          <ul id="ul1"></ul>
+        </div>
+        <div class="container2" id="div2">
+          <div id="div21" class="container3">
+            <p>Liste des tâches faites:</p>
+            <ul id="ul2"></ul>
+          </div>
+          <div id="div22" class="container4">
+            <p>Liste des tâches supprimées:</p>
+            <ul id="ul3"></ul>
+          </div>
+        </div>
       </div>
     </div>
-    </div>
-  </div>
   </body>
 </html>
