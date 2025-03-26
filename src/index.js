@@ -83,7 +83,7 @@ const createUserInactifElement=(user)=>{
         event.stopPropagation();
         deleteUser(user);
     })
-    span.className="todo"
+    span.className="theme"
     par.textContent=user
     li.className="ligne";
     li.addEventListener("click",(event)=>{
@@ -96,7 +96,7 @@ const createUserActifElement=(user)=>{
     const li =document.createElement("li");
     const span=document.createElement("span");
     const par=document.createElement("p");
-    span.className="todo done"
+    span.className="theme actif"
     par.textContent=user
     li.className="ligne";
     li.addEventListener("click",(event)=>{

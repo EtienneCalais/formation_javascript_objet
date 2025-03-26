@@ -4,47 +4,60 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>To do</title>
-    <div class="select">
-      <form id = "form2">
-        <input type="text" id ="input2" />
-        <button id="boutoncharger">Ajouter</button>
-      </form>
-      <ul id ="ul0">
-      </ul>
-    </div>
-    <script type="module" crossorigin src="/assets/index-DrfXkpFM.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DlhDVTPD.css">
+    <title>To do WEEK</title>
+
+    <script type="module" crossorigin src="/assets/index-BhyY27IA.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-9SW4Ticx.css">
   </head>
   <body id="body">
-
-     <div class="container1" id ="div1">
-      <label for="day-select">Selectionne le jour:</label>
-      <select name="day" id="day-select">
-        <option value="Lundi">Lundi</option>
-        <option value="Mardi">Mardi</option>
-        <option value="Mercredi">Mercredi</option>
-        <option value="Vendredi">Vendredi</option>
-        <option value="Samedi">Samedi</option>
-        <option value="Dimanche">Dimanche</option>
-      </select>
-      <hr>
-      <p>Liste des tâches à faire</p>
-      <form id = "form1">
-        <input type="text" id ="input1" />
-        <button>Ajouter</button>
-      </form>
-      <ul id ="ul1">
-      </ul>
+    <div class="generale">
+    <div class="titre">
+      <h1>Planifiaction des tâches de semaine</h1>
     </div>
-    <div class="container2" id ="div2">
-      <p>Liste des tâches faites</p>
-      <ul id ="ul2">
-    </ul>
-    <hr>
-    <p>Liste des tâches supprimées</p>
-      <ul id ="ul3">
-     </ul>
-     </div>
+    <div class="corps">
+      <div class="select">
+        <form id = "form2">
+          <input type="text" id ="input2" />
+          <button id="boutoncharger">Ajouter</button>        
+        </form>
+        <ul id ="ul0">
+        </ul>
+        <form id = "form3">
+          <button id="boutoninit" class="reinit">Réinitialiser le storage</button>
+        </form>
+      </div>
+       <div class="container1" id ="div1">
+        <label for="day-select">Selectionne le jour:</label>
+        <select name="day" id="day-select">
+          <option value="Lundi">Lundi</option>
+          <option value="Mardi">Mardi</option>
+          <option value="Mercredi">Mercredi</option>
+          <option value="Vendredi">Vendredi</option>
+          <option value="Samedi">Samedi</option>
+          <option value="Dimanche">Dimanche</option>
+        </select>
+        <hr>
+        <p>Liste des tâches à faire:</p>
+        <form id = "form1">
+          <input type="text" id ="input1" />
+          <button>Ajouter</button>
+        </form>
+        <ul id ="ul1">
+        </ul>
+      </div>
+      <div class="container2" id ="div2">"
+      <div  id ="div21" class="container3">
+        <p>Liste des tâches faites:</p>
+        <ul id ="ul2">
+      </ul>
+      </div>
+      <div  id ="div22" class="container3">
+      <p>Liste des tâches supprimées:</p>
+        <ul id ="ul3">
+       </ul>
+      </div>
+    </div>
+    </div>
+  </div>
   </body>
 </html>
