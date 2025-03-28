@@ -26,4 +26,10 @@ transfert de tache d’un thème à un autre
 
 validation des champs
 
-**poids p1 à p5 trier par priorité**
+## Gestion de priorité
+
+> Poids p1 à p5 trier par priorité
+> Pendant la création d'une tâche, pouvoir définir la priorité de la tâche
+> Pouvoir modifier la priorité à tout moment.
+> Lister les tâches d'un thème par ordre de priorité.
+
