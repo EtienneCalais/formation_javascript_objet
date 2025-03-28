@@ -28,8 +28,8 @@ validation des champs
 
 ## Gestion de priorité
 
-> Poids p1 à p5 trier par priorité
-> Pendant la création d'une tâche, pouvoir définir la priorité de la tâche
-> Pouvoir modifier la priorité à tout moment.
-> Lister les tâches d'un thème par ordre de priorité.
+> Poids p1 à p5 trier par priorité\
+> Pendant la création d'une tâche, pouvoir définir la priorité de la tâche\
+> Pouvoir modifier la priorité à tout moment.\
+> Lister les tâches d'un thème par ordre de priorité.\
 
