@@ -1,39 +1,85 @@
 class task {
-  constructor(name) {
+  constructor(name, Iedit = false, Itype = "todo", Ipoids = 5) {
     this.name = name;
-    this.isEdit = false;
-    this.isDelete = false;
-    this.isDone = false;
-    this.isTodo = true;
+    this.isEdit = Iedit;
+    this.type = Itype;
+    this.poids = Ipoids;
+    return this;
   }
   static name;
   static isEdit;
-  static isDone;
-  static isDelete;
-  static isTodo;
+  static type;
+  static poids;
+  toSerialise() {
+    return JSON.stringify(this);
+  }
+  toDeserialise(archive) {
+    let objetTask = JSON.parse(archive);
+    return new task(
+      objetTask.name,
+      objetTask.isEdit,
+      objetTask.type,
+      objetTask.Ipoids
+    );
+  }
+  getName() {
+    return this.name;
+  }
+  setName(Iname) {
+    this.name = Iname;
+  }
+  getIsEdit() {
+    return this.isEdit;
+  }
+  setIsEdit(IEdit) {
+    this.isEdit = IEdit;
+  }
+  getType() {
+    return this.type;
+  }
+  setType(Itype) {
+    this.type = Itype;
+  }
+  getPoids() {
+    return this.poids;
+  }
+  setPoids(IPoids) {
+    this.poids = Ipoids;
+  }
 }
 
 class tasksDay {
   static date;
   static taches;
-  constructor(tasks) {
-    if (tasks) {
-      if (tasks.date) {
-        this.date = tasks.date;
-        if (tasks.taches) {
-          const remplissage = (value, key, map) => {
-            this.taches.set(`${key}, ${value}`);
-          };
-          tasks.taches.forEach(remplissage);
-        }
-      } else {
-        this.date = tasks;
-        this.taches = new Map();
-      }
-    } else {
-      this.date = new Date(Date.now()).toDateString();
-      this.taches = new Map();
-    }
+  constructor(Idate = new Date(Date.now()).toDateString(), Itasks = new Map()) {
+    this.date = Idate;
+    this.taches = Itasks;
+  }
+  toSerialise() {
+    const object2 = {
+      date: this.date,
+      taches: Array.from(this.taches, ([k, v]) => [k, v.toSerialise()]),
+    };
+    return JSON.stringify(object2);
+  }
+  toDeserialise(archive) {
+    let object2 = JSON.parse(archive);
+    const c = new Map(object2.taches);
+    const e = new task();
+    const d = Array.from(c, ([k, v]) => [k, e.toDeserialise(v)]);
+    return new tasksDay(object2.date, new Map(d));
+  }
+  getDate() {
+    return this.date;
+  }
+  setDate(Idate) {
+    this.date = Idate;
+  }
+  getTaches() {
+    return this.taches;
+  }
+  setTaches(Itaches) {
+    this.taches = Itaches;
   }
   addTaskDay(tache) {
     if (tache.nom) {
@@ -65,34 +111,45 @@ class categorie {
   static date;
   static taches = new Map();
   static actif;
-  constructor(Icategorie, Ijour) {
-    if (Icategorie.nom) {
-      this.nom = Icategorie.nom;
-      if (Icategorie.actif) {
-        this.actif = true;
-      } else {
-        this.actif = false;
-      }
-      this.taches = new Map();
-      if (Icategorie.taches) {
-        const taskday_temp = new tasksDay(Icategorie.taches);
-        this.taches.set(Ijour, taskday_temp);
-      } else {
-        const taskday_temp = new tasksDay(Ijour);
-        this.taches.set(Ijour, taskday_temp);
-      }
-    } else {
-      if (Icategorie) {
-        this.nom = Icategorie;
-        this.actif = false;
-        this.date = new Date(Date.now()).toDateString();
-        const taskday_temp = new tasksDay(this.date);
-        this.taches = new Map();
-        this.taches.set(this.date, taskday_temp);
-      }
-    }
+  constructor(
+    Inom,
+    Idate = new Date(Date.now()).toDateString(),
+    Itaches = new Map(),
+    Iactif = false
+  ) {
+    this.nom = Inom;
+    this.date = Idate;
+    this.taches = Itaches;
+    this.actif = Iactif;
+    return this;
   }
-
+  toSerialise() {
+    const object2 = {
+      nom: this.nom,
+      date: this.date,
+      taches: Array.from(this.taches, ([k, v]) => [k, v.toSerialise()]),
+      actif: this.actif,
+    };
+    return JSON.stringify(object2);
+  }
+  toDeserialise(archive) {
+    let object2 = JSON.parse(archive);
+    const c = new Map(object2.taches);
+    const e = new tasksDay();
+    const d = Array.from(c, ([k, v]) => [k, e.toDeserialise(v)]);
+    return new categorie(
+      object2.nom,
+      object2.date,
+      new Map(Array.from(new Map(d))),
+      object2.actif
+    );
+  }
+  getNom() {
+    return this.nom;
+  }
+  setNom(Inom) {
+    this.nom = Inom;
+  }
   match(Icategorie) {
     return Icategorie === this.nom;
   }
@@ -115,8 +172,26 @@ class categorie {
 class data {
   static info;
 
-  constructor() {
-    this.info = { categories: [] };
+  constructor(info = { categories: [] }) {
+    this.info = info;
+  }
+  toSerialise() {
+    const object2 = {
+      info: { categories: new Array() },
+    };
+    for (let j = 0; j < this.info.categories.length; j++) {
+      object2.info.categories.push(this.info.categories[j].toSerialise());
+    }
+    return JSON.stringify(object2);
+  }
+  toDeserialise(archive) {
+    let object2 = JSON.parse(archive);
+    let cat = new categorie();
+    for (let j = 0; j < object2.info.categories.length; j++) {
+      this.info.categories.push(cat.toDeserialise(object2.info.categories[j]));
+    }
+
+    return this;
   }
 
   getInfoG() {

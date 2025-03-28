@@ -37,7 +37,7 @@ const unlock = () => {
   body2.hidden = false;
 };
 const chargement = () => {
-  todos = donnees.getaskDayToDo(personne, jour);
+  todos = donnees.getPersonne(personne).getTaskDay(jour);
   displayTodo();
   displayUser();
 };
@@ -108,6 +108,7 @@ const createUserActifElement = (user) => {
   return li;
 };
 const createTodoElement = (todo) => {
+  let tache = todos.getTaches().get(todo);
   const li = document.createElement("li");
   const span = document.createElement("span");
   const par = document.createElement("p");
@@ -121,24 +122,24 @@ const createTodoElement = (todo) => {
   buttonAvancer.textContent = "Avancer";
   buttonDelete.addEventListener("click", (event) => {
     event.stopPropagation();
-    deleteTodo(todo);
+    deleteTodo(tache);
   });
   buttonEdit.addEventListener("click", (event) => {
     event.stopPropagation();
-    toggleEditMode(todo);
+    toggleEditMode(tache);
   });
   buttonProcrastiner.addEventListener("click", (event) => {
     event.stopPropagation();
-    toggleProcrastiner(todo);
+    toggleProcrastiner(tache);
   });
   buttonAvancer.addEventListener("click", (event) => {
     event.stopPropagation();
-    togglebuttonAvancer(todo);
+    togglebuttonAvancer(tache);
   });
   span.className = "todo";
-  par.textContent = todo;
-  li.addEventListener("click", (event) => {
-    toggleIsDone(todo);
+  par.textContent = tache.getName();
+  span.addEventListener("click", (event) => {
+    toggleIsDone(tache);
   });
   li.append(
     span,
@@ -152,20 +153,21 @@ const createTodoElement = (todo) => {
   return li;
 };
 const createTodoEditElement = (todo) => {
+  let tache = todos.getTaches().get(todo);
   const li = document.createElement("li");
   let inputedit = document.createElement("input");
   const buttonSave = document.createElement("button");
   const buttonCancel = document.createElement("button");
   buttonCancel.addEventListener("click", (event) => {
     event.stopPropagation();
-    toggleEditMode(todo);
+    toggleEditMode(tache);
   });
   buttonSave.addEventListener("click", (event) => {
     event.stopPropagation();
-    editTodo(todo, inputedit);
+    editTodo(tache, inputedit);
   });
   input.type = "text";
-  inputedit.value = todo;
+  inputedit.value = tache.getName();
   buttonSave.textContent = "Save";
   buttonCancel.textContent = "Cancel";
   li.append(inputedit, buttonCancel, buttonSave);
@@ -173,29 +175,31 @@ const createTodoEditElement = (todo) => {
   return li;
 };
 const createIsDoneElement = (isdone) => {
+  let tache = todos.getTaches().get(isdone);
   const li = document.createElement("li");
   const span = document.createElement("span");
   const par = document.createElement("p");
   span.className = "todo done";
-  par.textContent = isdone;
+  par.textContent = tache.getName();
   li.className = "ligne";
   li.addEventListener("click", (event) => {
-    toggleTodo(isdone);
+    toggleTodo(tache);
   });
   li.append(span, par);
   return li;
 };
 const createIsDeleteElement = (isdelete) => {
+  let tache = todos.getTaches().get(isdelete);
   const li = document.createElement("li");
   const span = document.createElement("span");
   const par = document.createElement("p");
   span.className = "todo done";
-  par.textContent = isdelete;
+  par.textContent = tache.getName();
   li.className = "ligne";
   const buttonRestore = document.createElement("button");
   buttonRestore.addEventListener("click", (event) => {
     event.stopPropagation();
-    toggleRestoreMode(isdelete);
+    toggleRestoreMode(tache);
   });
   const buttonCorbeille = document.createElement("button");
   buttonCorbeille.addEventListener("click", (event) => {
@@ -217,8 +221,7 @@ const toggleSelectUser = (user) => {
   chargement();
 };
 const deleteTodo = (todo) => {
-  todos.taches.get(todo).isDelete = true;
-  todos.taches.get(todo).isTodo = false;
+  todo.setType("delete");
   chargement();
 };
 const deleteUser = (user) => {
@@ -226,28 +229,25 @@ const deleteUser = (user) => {
   chargement();
 };
 const toggleRestoreMode = (text) => {
-  todos.taches.get(text).isDelete = false;
-  todos.taches.get(text).isTodo = true;
+  text.setType("todo");
   chargement();
 };
 const toggleCorbeilleMode = (text) => {
   if (confirm("Souhaitez-vous supprimer définitivement la tâche?")) {
-    todos.taches.deleteItem(text);
+    todos.getTaches().delete(text);
     chargement();
   }
 };
 const toggleTodo = (text) => {
-  todos.taches.get(text).isDone = false;
-  todos.taches.get(text).isTodo = true;
+  text.setType("todo");
   chargement();
 };
 const toggleIsDone = (text) => {
-  todos.taches.get(text).isDone = true;
-  todos.taches.get(text).isTodo = false;
+  text.setType("done");
   chargement();
 };
 const toggleEditMode = (text) => {
-  todos.taches.get(text).isEdit = !todos.taches.get(text).isEdit;
+  text.setIsEdit(!text.getIsEdit());
   chargement();
 };
 const toggleProcrastiner = (text) => {
@@ -264,17 +264,15 @@ const togglebuttonAvancer = (text) => {
 };
 
 const editTodo = (text, input) => {
-  console.log(input.value);
   const value = input.value;
 
-  todos.taches.delete(text);
-  todos.addTaskDay(value);
+  text.setName(value);
   chargement();
 };
 
 let sauvegarde = setInterval(() => {
   if (sauvegardeauto) {
-    const jsonS = JSON.stringify(data.getData());
+    const jsonS = JSON.stringify(data.getData().toSerialise());
     localStorage.setItem("TODODATA", jsonS);
   }
 }, 2000);
@@ -339,23 +337,29 @@ const displayTodo = () => {
 
   ul3.textContent = "";
   if (todos) {
-    const remplissage = (value, key, map) => {
-      if (value.isTodo) {
-        if (value.isEdit) {
-          ul.append(createTodoEditElement(key));
-        } else {
-          ul.append(createTodoElement(key));
+    console.log(todos);
+    if (todos.taches.size > 0) {
+      const remplissage = (value, key, map) => {
+        switch (value.getType()) {
+          case "todo":
+            if (value.isEdit) {
+              ul.append(createTodoEditElement(key));
+            } else {
+              ul.append(createTodoElement(key));
+            }
+            break;
+          case "done":
+            ul2.append(createIsDoneElement(key));
+            break;
+          case "delete":
+            ul3.append(createIsDeleteElement(key));
         }
-      }
-      if (value.isDone) ul2.append(createIsDoneElement(key));
-
-      if (value.isDelete) {
-        ul3.append(createIsDeleteElement(key));
-      }
-    };
-    todos.taches.forEach(remplissage);
+      };
+      todos.taches.forEach(remplissage);
+    }
   }
 };
+
 const lock = () => {
   const body1 = document.getElementById("div1");
   body1.hidden = true;
@@ -363,14 +367,13 @@ const lock = () => {
   body2.hidden = true;
 };
 if (localStorage.getItem("TODODATA")) {
-  let recup = JSON.parse(localStorage.getItem("TODODATA"));
-  let nb = recup.info.categories.length;
+  donnees = data
+    .getData()
+    .toDeserialise(JSON.parse(localStorage.getItem("TODODATA")));
+  let nb = donnees.info.categories.length;
   if (nb > 0) {
-    for (let i = 0; i < nb; i++) {
-      donnees.addCategorie(recup.info.categories[i], jour);
-    }
     if (!(personne = donnees.getActifPersonne())) {
-      personne = recup.info.categories[nb - 1];
+      personne = donnees.info.categories[nb - 1];
       donnees.setActifPersonne(personne);
     }
     inputLogin.value = personne;
