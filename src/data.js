@@ -19,7 +19,7 @@ class task {
       objetTask.name,
       objetTask.isEdit,
       objetTask.type,
-      objetTask.Ipoids
+      objetTask.poids
     );
   }
   getName() {
@@ -44,7 +44,7 @@ class task {
     return this.poids;
   }
   setPoids(IPoids) {
-    this.poids = Ipoids;
+    this.poids = IPoids;
   }
 }
 
@@ -136,7 +136,7 @@ class categorie {
     let object2 = JSON.parse(archive);
     const c = new Map(object2.taches);
     const e = new tasksDay();
-    const d = Array.from(c, ([k, v]) => [k, e.toDeserialise(v)]);
+    let d = Array.from(c, ([k, v]) => [k, e.toDeserialise(v)]);
     return new categorie(
       object2.nom,
       object2.date,
@@ -178,17 +178,18 @@ class data {
   toSerialise() {
     const object2 = {
       info: { categories: new Array() },
-    };
+    };  
     for (let j = 0; j < this.info.categories.length; j++) {
       object2.info.categories.push(this.info.categories[j].toSerialise());
     }
+    
     return JSON.stringify(object2);
   }
   toDeserialise(archive) {
     let object2 = JSON.parse(archive);
     let cat = new categorie();
     for (let j = 0; j < object2.info.categories.length; j++) {
-      this.info.categories.push(cat.toDeserialise(object2.info.categories[j]));
+        this.info.categories.push(cat.toDeserialise(object2.info.categories[j]));
     }
 
     return this;
@@ -209,6 +210,7 @@ class data {
     if (!trouve) {
       const categorie_temp = new categorie(Icategorie, jour);
       this.info.categories.push(categorie_temp);
+      this.setActifPersonne(categorie_temp.getNom())
       return categorie_temp;
     } else {
       alert("Thème existant");
@@ -234,7 +236,7 @@ class data {
   }
   getActifPersonne() {
     for (let i = 0; i < this.info.categories.length; i++) {
-      if ((this.info.categories[i].actif = true)) {
+      if ((this.info.categories[i].actif)) {
         return this.info.categories[i].nom;
       }
     }

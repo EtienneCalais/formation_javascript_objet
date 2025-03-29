@@ -14,11 +14,15 @@ const form = document.getElementById("form1");
 const form2 = document.getElementById("form2");
 const form3 = document.getElementById("form3");
 const input = document.getElementById("input1");
-
+let dragon=0;
 const ul2 = document.getElementById("ul2");
 const ul3 = document.getElementById("ul3");
 const selday = document.getElementById("day-select");
 const aujourdhui = new Date(Date.now());
+const divtodo=document.getElementById("div1");
+const divnotodo=document.getElementById("div2");
+const divdone=document.getElementById("div21");
+const divdelete=document.getElementById("div22");
 let day = aujourdhui.getDate();
 let mois = aujourdhui.getMonth() + 1;
 if (day < 10) {
@@ -31,10 +35,8 @@ const aujourdhui_date = aujourdhui.getFullYear() + "-" + mois + "-" + day;
 selday.value = aujourdhui_date;
 jour = new Date(selday.value).toDateString();
 const unlock = () => {
-  const body1 = document.getElementById("div1");
-  body1.hidden = false;
-  const body2 = document.getElementById("div2");
-  body2.hidden = false;
+  divtodo.hidden = false;
+  divnotodo.hidden = false;
 };
 const chargement = () => {
   todos = donnees.getPersonne(personne).getTaskDay(jour);
@@ -112,29 +114,25 @@ const createTodoElement = (todo) => {
   const li = document.createElement("li");
   const span = document.createElement("span");
   const par = document.createElement("p");
-  const buttonProcrastiner = document.createElement("button");
-  const buttonAvancer = document.createElement("button");
+  let InputPoids = document.createElement("Input");
   const buttonDelete = document.createElement("button");
-  const buttonEdit = document.createElement("button");
   buttonDelete.textContent = "Supprimer";
-  buttonEdit.textContent = "Edit";
-  buttonProcrastiner.textContent = "Procrastiner";
-  buttonAvancer.textContent = "Avancer";
+  InputPoids.type="number"
+  InputPoids.min="1";
+  InputPoids.max="5";
+  InputPoids.className="poids";
+  InputPoids.maxlength="1";
+  InputPoids.value=tache.getPoids()
+  InputPoids.addEventListener("change",(event)=>{
+    togglePoids(tache, InputPoids);
+  })
   buttonDelete.addEventListener("click", (event) => {
     event.stopPropagation();
     deleteTodo(tache);
   });
-  buttonEdit.addEventListener("click", (event) => {
+  li.addEventListener("dblclick", (event) => {
     event.stopPropagation();
     toggleEditMode(tache);
-  });
-  buttonProcrastiner.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleProcrastiner(tache);
-  });
-  buttonAvancer.addEventListener("click", (event) => {
-    event.stopPropagation();
-    togglebuttonAvancer(tache);
   });
   span.className = "todo";
   par.textContent = tache.getName();
@@ -144,12 +142,13 @@ const createTodoElement = (todo) => {
   li.append(
     span,
     par,
-    buttonAvancer,
-    buttonProcrastiner,
-    buttonEdit,
+    InputPoids,
     buttonDelete
   );
   li.className = "ligne";
+  li.addEventListener('dragover', () => {
+    dragon=tache;
+  });
   return li;
 };
 const createTodoEditElement = (todo) => {
@@ -170,6 +169,7 @@ const createTodoEditElement = (todo) => {
   inputedit.value = tache.getName();
   buttonSave.textContent = "Save";
   buttonCancel.textContent = "Cancel";
+  li.draggable=false;
   li.append(inputedit, buttonCancel, buttonSave);
   li.className = "ligneEdit";
   return li;
@@ -182,8 +182,12 @@ const createIsDoneElement = (isdone) => {
   span.className = "todo done";
   par.textContent = tache.getName();
   li.className = "ligne";
-  li.addEventListener("click", (event) => {
+  span.addEventListener("click", (event) => {
     toggleTodo(tache);
+  });
+  li.draggable=true;
+  li.addEventListener('dragover', () => {
+    dragon=tache;
   });
   li.append(span, par);
   return li;
@@ -209,6 +213,9 @@ const createIsDeleteElement = (isdelete) => {
   buttonRestore.textContent = "Restore";
   buttonCorbeille.textContent = "Corbeille";
   li.append(span, par, buttonRestore, buttonCorbeille);
+  li.addEventListener('dragover', () => {
+    dragon=tache;
+  });
   return li;
 };
 const addTodo = (text) => {
@@ -226,6 +233,11 @@ const deleteTodo = (todo) => {
 };
 const deleteUser = (user) => {
   donnees.delPersonne(user);
+  chargement();
+};
+const togglePoids = (text, input) => {
+  console.log(input.value)
+  text.setPoids(input.value);
   chargement();
 };
 const toggleRestoreMode = (text) => {
@@ -247,19 +259,7 @@ const toggleIsDone = (text) => {
   chargement();
 };
 const toggleEditMode = (text) => {
-  text.setIsEdit(!text.getIsEdit());
-  chargement();
-};
-const toggleProcrastiner = (text) => {
-  if (donnees.addTaskDayToDo(personne, demain(jour), text)) {
-    donnees.delTaskDayToDo(personne, jour, text);
-  }
-  chargement();
-};
-const togglebuttonAvancer = (text) => {
-  if (donnees.addTaskDayToDo(personne, hier(jour), text)) {
-    donnees.delTaskDayToDo(personne, jour, text);
-  }
+  text.setIsEdit(false);
   chargement();
 };
 
@@ -267,6 +267,7 @@ const editTodo = (text, input) => {
   const value = input.value;
 
   text.setName(value);
+  text.setIsEdit(false);
   chargement();
 };
 
@@ -275,53 +276,16 @@ let sauvegarde = setInterval(() => {
     const jsonS = JSON.stringify(data.getData().toSerialise());
     localStorage.setItem("TODODATA", jsonS);
   }
+
 }, 2000);
-const demain = (jour) => {
-  switch (jour) {
-    case "Lundi":
-      return "Mardi";
-    case "Mardi":
-      return "Mercredi";
-    case "Mercredi":
-      return "Jeudi";
-    case "Jeudi":
-      return "Vendredi";
-    case "Vendredi":
-      return "Samedi";
-    case "Samedi":
-      return "Diamnche";
-    case "Diamnche":
-      return "Lundi";
-    default:
-      return "Lundi";
-  }
-};
-const hier = (jour) => {
-  switch (jour) {
-    case "Mercredi":
-      return "Mardi";
-    case "Jeudi":
-      return "Mercredi";
-    case "Vendredi":
-      return "Jeudi";
-    case "Samedi":
-      return "Vendredi";
-    case "Diamnche":
-      return "Samedi";
-    case "Lundi":
-      return "Diamnche";
-    case "Mardi":
-      return "Lundi";
-    default:
-      return "Lundi";
-  }
-};
+
 const displayUser = () => {
   ul0.textContent = "";
+
+  
   for (let index = 0; index < donnees.getAllPersonne().length; index++) {
     if (donnees.getAllPersonne()[index].actif) {
       ul0.append(createUserActifElement(donnees.getAllPersonne()[index].nom));
-      break;
     }
   }
   for (let index = 0; index < donnees.getAllPersonne().length; index++) {
@@ -332,12 +296,13 @@ const displayUser = () => {
 };
 const displayTodo = () => {
   ul.textContent = "";
-
+  ul.draggable=true;
+  ul2.draggable=true;
+  ul3.draggable=true;
   ul2.textContent = "";
 
   ul3.textContent = "";
   if (todos) {
-    console.log(todos);
     if (todos.taches.size > 0) {
       const remplissage = (value, key, map) => {
         switch (value.getType()) {
@@ -361,19 +326,18 @@ const displayTodo = () => {
 };
 
 const lock = () => {
-  const body1 = document.getElementById("div1");
-  body1.hidden = true;
-  const body2 = document.getElementById("div2");
-  body2.hidden = true;
+  divtodo.hidden = true;
+  divnotodo.hidden = true;
 };
 if (localStorage.getItem("TODODATA")) {
+
   donnees = data
     .getData()
     .toDeserialise(JSON.parse(localStorage.getItem("TODODATA")));
   let nb = donnees.info.categories.length;
   if (nb > 0) {
-    if (!(personne = donnees.getActifPersonne())) {
-      personne = donnees.info.categories[nb - 1];
+    if (!(personne === donnees.getActifPersonne())) {
+      personne = donnees.info.categories[nb - 1].getNom();
       donnees.setActifPersonne(personne);
     }
     inputLogin.value = personne;
@@ -384,3 +348,15 @@ if (localStorage.getItem("TODODATA")) {
 } else {
   lock();
 }
+divtodo.addEventListener('dragleave', () => {
+  dragon.setType("todo");
+  chargement();
+});
+divdone.addEventListener('dragleave', () => {
+  dragon.setType("done");
+  chargement();
+});
+divdelete.addEventListener('dragleave', () => {
+  dragon.setType("delete");
+  chargement();
+});
