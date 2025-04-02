@@ -20,6 +20,7 @@ const ul3 = document.getElementById("ul3");
 const selday = document.getElementById("day-select");
 const aujourdhui = new Date(Date.now());
 const divtodo=document.getElementById("div1");
+const divtache=document.getElementById("div0");
 const divnotodo=document.getElementById("div2");
 const divdone=document.getElementById("div21");
 const divdelete=document.getElementById("div22");
@@ -93,6 +94,8 @@ const createUserInactifElement = (user) => {
   li.addEventListener("click", (event) => {
     toggleSelectUser(user);
   });
+  li.addEventListener('dragleave', (event) => {
+    changerTheme(user,event);})
   li.append(span, par, buttonDelete);
   return li;
 };
@@ -106,6 +109,8 @@ const createUserActifElement = (user) => {
   li.addEventListener("click", (event) => {
     toggleSelectUser(user);
   });
+
+ 
   li.append(span, par);
   return li;
 };
@@ -115,7 +120,11 @@ const createTodoElement = (todo) => {
   const span = document.createElement("span");
   const par = document.createElement("p");
   let InputPoids = document.createElement("Input");
+  let InputDate = document.createElement("Input");
+  InputDate.type="Date";
   const buttonDelete = document.createElement("button");
+  const buttonChgDate = document.createElement("button");
+  buttonChgDate.textContent = "Reporter";
   buttonDelete.textContent = "Supprimer";
   InputPoids.type="number"
   InputPoids.min="1";
@@ -123,12 +132,18 @@ const createTodoElement = (todo) => {
   InputPoids.className="poids";
   InputPoids.maxlength="1";
   InputPoids.value=tache.getPoids()
+  InputDate.value = selday.value;
   InputPoids.addEventListener("change",(event)=>{
     togglePoids(tache, InputPoids);
   })
+  
   buttonDelete.addEventListener("click", (event) => {
     event.stopPropagation();
     deleteTodo(tache);
+  });
+  buttonChgDate.addEventListener("click", (event) => {
+    event.stopPropagation();
+    changerDate(tache,new Date(InputDate.value).toDateString());
   });
   li.addEventListener("dblclick", (event) => {
     event.stopPropagation();
@@ -142,11 +157,21 @@ const createTodoElement = (todo) => {
   li.append(
     span,
     par,
+    buttonChgDate,
+    InputDate,
     InputPoids,
     buttonDelete
   );
-  li.className = "ligne";
-  li.addEventListener('dragover', () => {
+  switch (InputPoids.value){
+    
+    case "5":li.className += " pcinq"; break;
+    case "4":li.className += " pquatre"; break;
+    case "3":li.className += " ptrois"; break;
+    case "2":li.className += " pdeux"; break;
+    case "1":li.className += " pun"; break;
+    
+  }
+  li.addEventListener('dragleave', () => {
     dragon=tache;
   });
   return li;
@@ -236,7 +261,6 @@ const deleteUser = (user) => {
   chargement();
 };
 const togglePoids = (text, input) => {
-  console.log(input.value)
   text.setPoids(input.value);
   chargement();
 };
@@ -270,6 +294,18 @@ const editTodo = (text, input) => {
   text.setIsEdit(false);
   chargement();
 };
+const changerTheme=(theme,event)=>{
+  if (donnees.goToCategorie(theme).getTaskDay(jour).addTaskDay(dragon)){
+    todos.getTaches().delete(dragon.getName());
+  }
+  chargement();
+}
+const changerDate=(tache,date)=>{
+  if (donnees.goToCategorie(personne).getTaskDay(date).addTaskDay(tache)){
+    todos.getTaches().delete(tache.getName());
+  }
+  chargement();
+}
 
 let sauvegarde = setInterval(() => {
   if (sauvegardeauto) {
@@ -281,7 +317,7 @@ let sauvegarde = setInterval(() => {
 
 const displayUser = () => {
   ul0.textContent = "";
-
+  ul0.draggable=true
   
   for (let index = 0; index < donnees.getAllPersonne().length; index++) {
     if (donnees.getAllPersonne()[index].actif) {
@@ -304,6 +340,7 @@ const displayTodo = () => {
   ul3.textContent = "";
   if (todos) {
     if (todos.taches.size > 0) {
+      todos.trier();
       const remplissage = (value, key, map) => {
         switch (value.getType()) {
           case "todo":
@@ -336,7 +373,8 @@ if (localStorage.getItem("TODODATA")) {
     .toDeserialise(JSON.parse(localStorage.getItem("TODODATA")));
   let nb = donnees.info.categories.length;
   if (nb > 0) {
-    if (!(personne === donnees.getActifPersonne())) {
+    if (!(personne =donnees.getActifPersonne())) {
+      console.log("non")
       personne = donnees.info.categories[nb - 1].getNom();
       donnees.setActifPersonne(personne);
     }
@@ -348,15 +386,15 @@ if (localStorage.getItem("TODODATA")) {
 } else {
   lock();
 }
-divtodo.addEventListener('dragleave', () => {
+divtodo.addEventListener('dragover', () => {
   dragon.setType("todo");
   chargement();
 });
-divdone.addEventListener('dragleave', () => {
+divdone.addEventListener('dragover', () => {
   dragon.setType("done");
   chargement();
 });
-divdelete.addEventListener('dragleave', () => {
+divdelete.addEventListener('dragover', () => {
   dragon.setType("delete");
   chargement();
 });

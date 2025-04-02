@@ -62,6 +62,10 @@ class tasksDay {
     };
     return JSON.stringify(object2);
   }
+  trier(){
+    const sortedArray = Array.from(this.taches).sort((a, b) => a[1].getPoids()-b[1].getPoids());
+    this.taches=new Map(sortedArray)
+  }
   toDeserialise(archive) {
     let object2 = JSON.parse(archive);
     const c = new Map(object2.taches);
@@ -82,19 +86,22 @@ class tasksDay {
     this.taches = Itaches;
   }
   addTaskDay(tache) {
-    if (tache.nom) {
-      if (!this.getTaskDay(tache.nom)) {
-        this.taches.set(tache.nom, tache);
+
+    if (tache.name) {
+      if (!this.getTaskDay(tache.name)) {
+        this.taches.set(tache.name, tache);
+        return true
       } else {
-        alert("La tâche existe déjà");
+        return false;
       }
-    }
-    if (!this.getTaskDay(tache)) {
+    }else{
+      if (!this.getTaskDay(tache)) {
       let tache_temp = new task(tache);
       this.taches.set(tache, tache_temp);
     } else {
       alert("La tâche existe déjà");
-    }
+      return false;
+    }}
   }
   getTaskDay(journee) {
     if (this.taches.size > 0) {
@@ -215,6 +222,17 @@ class data {
     } else {
       alert("Thème existant");
     }
+  }
+  goToCategorie(Icategorie) {
+    for (let i = 0; i < this.info.categories.length; i++) {
+      if (this.info.categories[i].match(Icategorie)) {
+       return this.info.categories[i]
+      }
+    }
+      const categorie_temp = new categorie(Icategorie, jour);
+      this.info.categories.push(categorie_temp);
+      this.setActifPersonne(categorie_temp.getNom())
+      return categorie_temp;
   }
   getPersonne(Icategorie) {
     for (let i = 0; i < this.info.categories.length; i++) {

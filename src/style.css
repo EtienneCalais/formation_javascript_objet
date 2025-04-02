@@ -81,7 +81,23 @@
   }
   .poids{
     max-width: 30px;
-    width :auto
+    width :auto;
+    
+  }
+  .pun{
+    background-color:red;
+  }
+  .pdeux{
+    background-color:rgb(226, 180, 27);
+  }
+  .ptrois{
+    background-color:rgb(123, 255, 0);
+  }
+  .pquatre{
+    background-color:rgb(0, 255, 106);
+  }
+  .pcinq{
+    background-color:rgb(0, 238, 255);
   }
   input {
     padding: 8px 15px;
